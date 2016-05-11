@@ -10,7 +10,7 @@
     }
   ],
   "keywords": [
-    "wordpress", "composer", "wp", "plugin", "acf", "env", "pro"
+    "wordpress", "composer", "wp", "plugin", "wp migrate db pro", "env", "pro"
   ],
   "require": {
     "php": ">=5.5",

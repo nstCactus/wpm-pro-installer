@@ -98,8 +98,6 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            PackageEvents::PRE_PACKAGE_INSTALL => 'addVersion',
-            PackageEvents::PRE_PACKAGE_UPDATE => 'addVersion',
             PluginEvents::PRE_FILE_DOWNLOAD => 'addKey'
         ];
     }
@@ -124,7 +122,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         if (in_array($package->getName() ,self::WPM_PRO_PACKAGE_NAMES)) {
             $version = $this->validateVersion($package->getPrettyVersion(), $package->getName());
             $package->setDistUrl(
-                $this->addParameterToUrl($package->getDistUrl(), 't', $version)
+                $this->addParameterToUrl($package->getDistUrl(), 'v', $version)
             );
         }
     }
@@ -146,11 +144,13 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $processedUrl = $event->getProcessedUrl();
 
         if ($this->isWPMProPackageUrl($processedUrl)) {
+            $processedUrl = $processedUrl . 'site_url='. $this->getSiteUrlFromEnv();
+
             $rfs = $event->getRemoteFilesystem();
             $wpmRfs = new RemoteFilesystem(
                 $this->addParameterToUrl(
                     $processedUrl,
-                    'k',
+                    'licence_key',
                     $this->getKeyFromEnv()
                 ),
                 $this->io,
@@ -238,6 +238,30 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
         if (!$key) {
             throw new MissingKeyException(self::KEY_ENV_VARIABLE);
+        }
+
+        return $key;
+    }
+
+    /**
+     * Get the WPM PRO site url from the environment
+     *
+     * Loads the .env file that is in the same directory as composer.json
+     * and gets the key from the environment variable KEY_ENV_VARIABLE.
+     * Already set variables will not be overwritten by the variables in .env
+     * @link https://github.com/vlucas/phpdotenv#immutability
+     *
+     * @access protected
+     * @return string The key from the environment
+     * @throws PhilippBaschke\ACFProInstaller\Exceptions\MissingKeyException
+     */
+    protected function getSiteUrlFromEnv()
+    {
+        $this->loadDotEnv();
+        $key = getenv(self::URL_ENV_VARIABLE);
+
+        if (!$key) {
+            throw new MissingKeyException(self::URL_ENV_VARIABLE);
         }
 
         return $key;

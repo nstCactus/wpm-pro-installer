@@ -1,4 +1,4 @@
-<?php namespace PhilippBaschke\ACFProInstaller;
+<?php namespace IgniteOnline\WPMProInstaller;
 
 use Composer\Config;
 use Composer\IO\IOInterface;
