@@ -39,21 +39,29 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     const URL_ENV_VARIABLE = 'WP_HOME';
 
     /**
-     * The name of the ACF PRO package
+     * The name of the WPM PRO package
      */
-    const WPM_PRO_PACKAGE_NAMES = [
-        'deliciousbrains/wp-migrate-db-pro',
-        'deliciousbrains/wp-migrate-db-pro-media-files',
-    ];
+
+    public static function WPM_PRO_PACKAGE_NAMES()
+    {
+        return [
+            'deliciousbrains/wp-migrate-db-pro',
+            'deliciousbrains/wp-migrate-db-pro-media-files',
+        ];
+    }
 
     /**
-     * The url where ACF PRO can be downloaded (without version and key)
+     * The url where WPM PRO can be downloaded (without version and key)
      */
-    const WPM_PRO_PACKAGE_URLS = [
-        'deliciousbrains/wp-migrate-db-pro'             => 'https://deliciousbrains.com/dl/wp-migrate-db-pro-latest.zip?',
-        'deliciousbrains/wp-migrate-db-pro-media-files' => 'https://deliciousbrains.com/dl/wp-migrate-db-pro-media-files-latest.zip?',
 
-    ];
+    public static function WPM_PRO_PACKAGE_URLS()
+    {
+        return [
+            'deliciousbrains/wp-migrate-db-pro' => 'https://deliciousbrains.com/dl/wp-migrate-db-pro-latest.zip?',
+            'deliciousbrains/wp-migrate-db-pro-media-files' => 'https://deliciousbrains.com/dl/wp-migrate-db-pro-media-files-latest.zip?',
+
+        ];
+    }
 
     /**
      * @access protected
@@ -119,7 +127,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     {
         $package = $this->getPackageFromOperation($event->getOperation());
 
-        if (in_array($package->getName() ,self::WPM_PRO_PACKAGE_NAMES)) {
+        if (in_array($package->getName(), self::WPM_PRO_PACKAGE_NAMES())) {
             $version = $this->validateVersion($package->getPrettyVersion(), $package->getName());
             $package->setDistUrl(
                 $this->addParameterToUrl($package->getDistUrl(), 'v', $version)
@@ -144,7 +152,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
         $processedUrl = $event->getProcessedUrl();
 
         if ($this->isWPMProPackageUrl($processedUrl)) {
-            $processedUrl = $processedUrl . 'site_url='. $this->getSiteUrlFromEnv();
+            $processedUrl = $processedUrl . 'site_url=' . $this->getSiteUrlFromEnv();
 
             $rfs = $event->getRemoteFilesystem();
             $wpmRfs = new RemoteFilesystem(
@@ -216,7 +224,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     protected function isWPMProPackageUrl($url)
     {
-        return in_array($url, self::WPM_PRO_PACKAGE_URLS) !== false;
+        return in_array($url, self::WPM_PRO_PACKAGE_URLS()) !== false;
     }
 
     /**
