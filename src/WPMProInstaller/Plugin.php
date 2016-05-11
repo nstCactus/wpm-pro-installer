@@ -1,4 +1,4 @@
-<?php namespace PhilippBaschke\ACFProInstaller;
+<?php namespace IgniteOnline\WPMProInstaller;
 
 use Composer\Composer;
 use Composer\DependencyResolver\Operation\OperationInterface;
@@ -10,7 +10,7 @@ use Composer\Plugin\PluginEvents;
 use Composer\Plugin\PluginInterface;
 use Composer\Plugin\PreFileDownloadEvent;
 use Dotenv\Dotenv;
-use PhilippBaschke\ACFProInstaller\Exceptions\MissingKeyException;
+use IgniteOnline\WPMProInstaller\Exceptions\MissingKeyException;
 
 /**
  * A composer plugin that makes installing ACF PRO possible
@@ -31,19 +31,29 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      * The name of the environment variable
      * where the ACF PRO key should be stored.
      */
-    const KEY_ENV_VARIABLE = 'ACF_PRO_KEY';
+    const KEY_ENV_VARIABLE = 'WPM_PRO_KEY';
+
+    /**
+     * The URL or the project
+     */
+    const URL_ENV_VARIABLE = 'WP_HOME';
 
     /**
      * The name of the ACF PRO package
      */
-    const ACF_PRO_PACKAGE_NAME =
-    'advanced-custom-fields/advanced-custom-fields-pro';
+    const WPM_PRO_PACKAGE_NAMES = [
+        'deliciousbrains/wp-migrate-db-pro',
+        'deliciousbrains/wp-migrate-db-pro-media-files',
+    ];
 
     /**
      * The url where ACF PRO can be downloaded (without version and key)
      */
-    const ACF_PRO_PACKAGE_URL =
-    'https://connect.advancedcustomfields.com/index.php?p=pro&a=download';
+    const WPM_PRO_PACKAGE_URLS = [
+        'deliciousbrains/wp-migrate-db-pro'             => 'https://deliciousbrains.com/dl/wp-migrate-db-pro-latest.zip?',
+        'deliciousbrains/wp-migrate-db-pro-media-files' => 'https://deliciousbrains.com/dl/wp-migrate-db-pro-media-files-latest.zip?',
+
+    ];
 
     /**
      * @access protected
@@ -111,8 +121,8 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     {
         $package = $this->getPackageFromOperation($event->getOperation());
 
-        if ($package->getName() === self::ACF_PRO_PACKAGE_NAME) {
-            $version = $this->validateVersion($package->getPrettyVersion());
+        if (in_array($package->getName() ,self::WPM_PRO_PACKAGE_NAMES)) {
+            $version = $this->validateVersion($package->getPrettyVersion(), $package->getName());
             $package->setDistUrl(
                 $this->addParameterToUrl($package->getDistUrl(), 't', $version)
             );
@@ -135,9 +145,9 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     {
         $processedUrl = $event->getProcessedUrl();
 
-        if ($this->isAcfProPackageUrl($processedUrl)) {
+        if ($this->isWPMProPackageUrl($processedUrl)) {
             $rfs = $event->getRemoteFilesystem();
-            $acfRfs = new RemoteFilesystem(
+            $wpmRfs = new RemoteFilesystem(
                 $this->addParameterToUrl(
                     $processedUrl,
                     'k',
@@ -148,7 +158,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
                 $rfs->getOptions(),
                 $rfs->isTlsDisabled()
             );
-            $event->setRemoteFilesystem($acfRfs);
+            $event->setRemoteFilesystem($wpmRfs);
         }
     }
 
@@ -180,7 +190,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      * @return string The valid version
      * @throws UnexpectedValueException
      */
-    protected function validateVersion($version)
+    protected function validateVersion($version, $package_name)
     {
         // \A = start of string, \Z = end of string
         // See: http://stackoverflow.com/a/34994075
@@ -188,7 +198,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
 
         if (!preg_match($major_minor_patch, $version)) {
             throw new \UnexpectedValueException(
-                'The version constraint of ' . self::ACF_PRO_PACKAGE_NAME .
+                'The version constraint of ' . $package_name .
                 ' should be exact (with 3 digits). ' .
                 'Invalid version string "' . $version . '"'
             );
@@ -204,9 +214,9 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      * @param string The url that should be checked
      * @return bool
      */
-    protected function isAcfProPackageUrl($url)
+    protected function isWPMProPackageUrl($url)
     {
-        return strpos($url, self::ACF_PRO_PACKAGE_URL) !== false;
+        return in_array($url, self::WPM_PRO_PACKAGE_URLS) !== false;
     }
 
     /**
@@ -242,7 +252,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      */
     protected function loadDotEnv()
     {
-        if (file_exists(getcwd().DIRECTORY_SEPARATOR.'.env')) {
+        if (file_exists(getcwd() . DIRECTORY_SEPARATOR . '.env')) {
             $dotenv = new Dotenv(getcwd());
             $dotenv->load();
         }

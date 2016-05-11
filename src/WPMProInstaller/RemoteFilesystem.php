@@ -16,7 +16,7 @@ class RemoteFilesystem extends \Composer\Util\RemoteFilesystem
      * @access protected
      * @var string
      */
-    protected $acfFileUrl;
+    protected $wpmFileUrl;
 
      /**
      * Constructor
@@ -29,13 +29,13 @@ class RemoteFilesystem extends \Composer\Util\RemoteFilesystem
      * @param bool $disableTls
      */
     public function __construct(
-        $acfFileUrl,
+        $wpmFileUrl,
         IOInterface $io,
         Config $config = null,
         array $options = [],
         $disableTls = false
     ) {
-        $this->acfFileUrl = $acfFileUrl;
+        $this->wpmFileUrl = $wpmFileUrl;
         parent::__construct($io, $config, $options, $disableTls);
     }
 
@@ -61,7 +61,7 @@ class RemoteFilesystem extends \Composer\Util\RemoteFilesystem
     ) {
         return parent::copy(
             $originUrl,
-            $this->acfFileUrl,
+            $this->wpmFileUrl,
             $fileName,
             $progress,
             $options
