@@ -69,12 +69,9 @@ WPM_PRO_KEY=Your-Key-Here
 ```sh
 composer require deliciousbrains/wp-migrate-db-pro:*
 ```
-You can specify an [exact version][composer-versions] (that matches your desired version).
-
-If you use **`*`**, composer will install the version from the package repository (see 1). This has the benefit that you only need to change the version in the package repository when you want to update.
-
-*Be aware that `composer update` will only work if you change the `version` in the package repository. Decreasing the version only works if you require an [exact version][composer-versions].*
-
+Unfortunately, DeliciousBrains is not exposing a way of retrieving different versions of their plugin.
+Because of this, changing the version in the package section will download the latest version regardless.
+You have to manually change the version in your `composer.json` file to manually trigger composer to download a new package.
 [composer-repositories]: https://getcomposer.org/doc/04-schema.md#repositories
 [composer-versions]: https://getcomposer.org/doc/articles/versions.md
 [package-gist]: https://gist.github.com/dmalatesta/4fae4490caef712a51bf

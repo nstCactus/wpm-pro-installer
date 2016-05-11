@@ -141,7 +141,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      *
      * The key is not added to the package because it would show up in the
      * composer.lock file in this case. A custom file system is used to
-     * swap out the ACF PRO url with a url that contains the key.
+     * swap out the WPM PRO url with a url that contains the key.
      *
      * @access public
      * @param PreFileDownloadEvent $event The event that called this method
@@ -216,7 +216,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * Test if the given url is the ACF PRO download url
+     * Test if the given url is the WPM PRO download url
      *
      * @access protected
      * @param string The url that should be checked
@@ -228,7 +228,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
     }
 
     /**
-     * Get the ACF PRO key from the environment
+     * Get the WPM PRO key from the environment
      *
      * Loads the .env file that is in the same directory as composer.json
      * and gets the key from the environment variable KEY_ENV_VARIABLE.
@@ -237,7 +237,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      *
      * @access protected
      * @return string The key from the environment
-     * @throws PhilippBaschke\ACFProInstaller\Exceptions\MissingKeyException
+     * @throws IgniteOnline\WPMProInstaller\Exceptions\MissingKeyException
      */
     protected function getKeyFromEnv()
     {
@@ -261,7 +261,7 @@ class Plugin implements PluginInterface, EventSubscriberInterface
      *
      * @access protected
      * @return string The key from the environment
-     * @throws PhilippBaschke\ACFProInstaller\Exceptions\MissingKeyException
+     * @throws IgniteOnline\WPMProInstaller\Exceptions\MissingKeyException
      */
     protected function getSiteUrlFromEnv()
     {
