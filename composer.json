@@ -1,9 +1,13 @@
 {
-  "name": "igniteonline/wpm-pro-installer",
+  "name": "nstcactus/wpm-pro-installer",
   "description": "An install helper for WP Migrate DB Pro and WP Migrate DB Pro Media Files",
   "type": "composer-plugin",
   "license": "MIT",
   "authors": [
+      {
+          "name": "nstCactus",
+          "email": "nstCactus@gmail.com"
+      },
     {
       "name": "Nicolo Sacchi",
       "email": "nicolo.s@igniteonline.com.au"
@@ -15,7 +19,7 @@
   "require": {
     "php": ">=5.5",
     "composer-plugin-api": "^1.0",
-    "vlucas/phpdotenv": "^2.2"
+    "vlucas/phpdotenv": "^3.0"
   },
   "require-dev": {
     "composer/composer": "1.0.*",
